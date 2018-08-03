@@ -92,4 +92,4 @@ function onClick(title) {
     url: title
   });
 }
-setInterval(init, 5 * 60 * 100);
+setInterval(init, 5 * 60 * 1000);
