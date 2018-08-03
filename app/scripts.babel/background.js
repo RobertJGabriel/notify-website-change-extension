@@ -49,6 +49,7 @@ function init() {
           var timeStamp = Math.round(new Date().getTime() / 1000);
           var timeStampYesterday = timeStamp - (24 * 3600);
           var is24 = lastEdited >= new Date(timeStampYesterday).getTime();
+          console.log(is24);
           if (is24) {
             popup(URL);
           }
