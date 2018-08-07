@@ -4,14 +4,28 @@
  * @param  {} callback
  */
 function sendAjaxRequest(url, callback) {
-  const xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = () => {
-    if (xhr.readyState == 4 && xhr.status == 200) {
-      callback(xhr.responseText);
+  var promiseObj = new Promise(function (resolve, reject) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.send();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState === 4) {
+        if (xhr.status === 200) {
+          console.log('xhr done successfully');
+          var resp = xhr.responseText;
+          var respJson = JSON.parse(resp);
+          resolve(respJson);
+        } else {
+          reject(xhr.status);
+          console.log('xhr failed');
+        }
+      } else {
+        console.log('xhr processing going on');
+      }
     }
-  };
-  xhr.open('GET', url, true);
-  xhr.send();
+    console.log('request sent succesfully');
+  });
+  return promiseObj;
 }
 
 /**
@@ -39,33 +53,31 @@ function init() {
     for (const URL of txtArray) {
       if (isUrlValid(URL)) {
         let lookupURL = `https://intense-plains-75758.herokuapp.com/router?url=${URL}`;
-        var x = sendAjaxRequest(lookupURL, resp => {});
 
-        promises.push(x);
+        promises.push(sendAjaxRequest(lookupURL));
       }
     }
 
     Promise.all(promises)
       .then(responseList => {
-        console.dir(responseList);
-        let size = JSON.parse(responseList).length;
-        if (size === null || size === undefined || size === 0) {
-          return false;
+        for (const response of responseList) {
+          let size = parseInt(response.length);
+          let websiteURL = response.URL;
+          if ((size === null || size === undefined || size === 0) || (websiteURL === null || websiteURL === undefined || websiteURL === '')) {
+            return false;
+          }
+          let lastSize = localStorage.getItem(websiteURL);
+          if (lastSize === null || lastSize === undefined) {
+            localStorage.setItem(websiteURL, size);
+            lastSize = localStorage.getItem('URL');
+          }
+          console.log(size);
+          console.log(lastSize);
+          if (size !== parseInt(lastSize)) {
+            popup(websiteURL);
+          }
         }
-
-        let lastSize = localStorage.getItem('URL');
-
-        if (lastSize === null) {
-          localStorage.setItem(URL, size);
-          lastSize = localStorage.getItem('URL');
-        }
-
-
-        if (size !== lastDate) {
-          popup(URL);
-        }
-      })
-
+      });
   });
 
 }
@@ -85,7 +97,7 @@ function popup(title) {
 
   const opt = {
     type: 'basic',
-    title: title,
+    title: "New Update",
     message: `${title} has been updated`,
     iconUrl: chrome.runtime.getURL('images/icon-128.png'),
     requireInteraction: true
