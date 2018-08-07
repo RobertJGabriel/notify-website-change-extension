@@ -35,30 +35,37 @@ function init() {
     }
 
     const txtArray = textarea.split('\n');
-
+    let promises = [];
     for (const URL of txtArray) {
       if (isUrlValid(URL)) {
         let lookupURL = `https://intense-plains-75758.herokuapp.com/router?url=${URL}`;
-        sendAjaxRequest(lookupURL, resp => {
-          var lastEdited = JSON.parse(resp).message;
-          console.log(lookupURL);
-          console.table(resp);
-          if (lastEdited === null || lastEdited === undefined) {
-            return false;
-          }
-          lastEdited = new Date(lastEdited);
-          var timeStamp = Math.round(new Date().getTime() / 1000);
-          var timeStampYesterday = timeStamp - (24 * 3600);
-          var is24 = lastEdited >= new Date(timeStampYesterday).getTime();
-          console.log(is24);
-          if (is24) {
-            popup(URL);
-          }
+        var x = sendAjaxRequest(lookupURL, resp => {});
 
-          //  
-        });
+        promises.push(x);
       }
     }
+
+    Promise.all(promises)
+      .then(responseList => {
+        console.dir(responseList);
+        let size = JSON.parse(responseList).length;
+        if (size === null || size === undefined || size === 0) {
+          return false;
+        }
+
+        let lastSize = localStorage.getItem('URL');
+
+        if (lastSize === null) {
+          localStorage.setItem(URL, size);
+          lastSize = localStorage.getItem('URL');
+        }
+
+
+        if (size !== lastDate) {
+          popup(URL);
+        }
+      })
+
   });
 
 }
@@ -98,4 +105,4 @@ function onClick(title) {
     url: title
   });
 }
-setInterval(init, 5 * 60 * 1000);
+setInterval(init, 5 * 60 * 100);

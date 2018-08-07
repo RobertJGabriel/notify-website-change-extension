@@ -2,4 +2,9 @@ body {
   padding: 20px;
 
   width: 500px;
+  height: 500px;
+}
+
+#editor{
+  height: -webkit-fill-available;
 }
