@@ -53,7 +53,6 @@ function init() {
     for (const URL of txtArray) {
       if (isUrlValid(URL)) {
         let lookupURL = `https://intense-plains-75758.herokuapp.com/router?url=${URL}`;
-
         promises.push(sendAjaxRequest(lookupURL));
       }
     }
@@ -71,10 +70,10 @@ function init() {
             localStorage.setItem(websiteURL, size);
             lastSize = localStorage.getItem('URL');
           }
-          console.log(size);
-          console.log(lastSize);
           if (size !== parseInt(lastSize)) {
             popup(websiteURL);
+          }else{
+            console.log(websiteURL);
           }
         }
       });
@@ -102,10 +101,7 @@ function popup(title) {
     iconUrl: chrome.runtime.getURL('images/icon-128.png'),
     requireInteraction: true
   };
-
-
   chrome.notifications.create(title, opt);
-
 }
 
 // create a on Click listener for notifications
@@ -117,4 +113,4 @@ function onClick(title) {
     url: title
   });
 }
-setInterval(init, 5 * 60 * 100);
+setInterval(init, 5 * 60 * 1000);
