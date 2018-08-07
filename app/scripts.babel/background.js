@@ -41,8 +41,9 @@ function init() {
         let lookupURL = `https://intense-plains-75758.herokuapp.com/router?url=${URL}`;
         sendAjaxRequest(lookupURL, resp => {
           var lastEdited = JSON.parse(resp).message;
-
-          if (lastEdited === null || lastEdited === undefined){
+          console.log(lookupURL);
+          console.table(resp);
+          if (lastEdited === null || lastEdited === undefined) {
             return false;
           }
           lastEdited = new Date(lastEdited);
@@ -54,7 +55,7 @@ function init() {
             popup(URL);
           }
 
-       //  
+          //  
         });
       }
     }
@@ -88,8 +89,8 @@ function popup(title) {
 
 }
 
-  // create a on Click listener for notifications
-  chrome.notifications.onClicked.addListener(onClick);
+// create a on Click listener for notifications
+chrome.notifications.onClicked.addListener(onClick);
 
 function onClick(title) {
   chrome.notifications.clear(title);
@@ -97,4 +98,4 @@ function onClick(title) {
     url: title
   });
 }
-setInterval(init, 5 * 60 * 100);
+setInterval(init, 5 * 60 * 1000);
