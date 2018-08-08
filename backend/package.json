@@ -1,0 +1,26 @@
+{
+  "name": "notify-jobs-app-backend",
+  "version": "1.0.0",
+  "description": "Notify me of any changes made to a website or websites hosted on herku  ",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "publish": "git add . && git commit -m 'Updated backend' && git push heroku master"
+  },
+  "keywords": [
+    "node",
+    "stripe",
+    "payments"
+  ],
+  "author": "Robert James Gabriel",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "heroku": "^0.2.0",
+    "pug": "^2.0.0-rc.4",
+    "request": "^2.87.0",
+    "stripe": "^5.4.0"
+  }
+}
