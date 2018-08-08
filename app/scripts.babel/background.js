@@ -28,16 +28,6 @@ function sendAjaxRequest(url, callback) {
   return promiseObj;
 }
 
-/**
- * Server procedure for content script.
- * Receives a request containing two parameters:
- * method:
- *    'lookup' for a Dictionary lookup.
- *    'audio' to look up the URL of a given Wikimedia audio file.
- * @param  {} request
- * @param  {} sender
- * @param  {} callback
- */
 function init() {
 
   // Load the data if needed
@@ -96,7 +86,7 @@ function popup(title) {
 
   const opt = {
     type: 'basic',
-    title: "New Update",
+    title: 'New Update',
     message: `${title} has been updated`,
     iconUrl: chrome.runtime.getURL('images/icon-128.png'),
     requireInteraction: true
