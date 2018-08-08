@@ -29,7 +29,7 @@ function sendAjaxRequest(url, callback) {
 }
 
 function init() {
-
+  const backendAPI = `https://intense-plains-75758.herokuapp.com`; // Replace this with your own backend
   // Load the data if needed
   chrome.storage.sync.get('storedData', item => {
     const textarea = item.storedData;
@@ -42,7 +42,7 @@ function init() {
     let promises = [];
     for (const URL of txtArray) {
       if (isUrlValid(URL)) {
-        let lookupURL = `https://intense-plains-75758.herokuapp.com/router?url=${URL}`;
+        let lookupURL = `${backendAPI}/router?url=${URL}`;
         promises.push(sendAjaxRequest(lookupURL));
       }
     }
