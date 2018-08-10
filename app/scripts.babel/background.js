@@ -27,7 +27,8 @@ function sendAjaxRequest(url, callback) {
   });
   return promiseObj;
 }
-
+/**
+ */
 function init() {
   const backendAPI = `https://intense-plains-75758.herokuapp.com`; // Replace this with your own backend
   // Load the data if needed
@@ -42,35 +43,66 @@ function init() {
     let promises = [];
     for (const URL of txtArray) {
       if (isUrlValid(URL)) {
-        let lookupURL = `${backendAPI}/router?url=${URL}`;
+        let lookupURL = `${backendAPI}/router?url=${URL}?updated=1`;
         promises.push(sendAjaxRequest(lookupURL));
       }
     }
 
-    Promise.all(promises)
-      .then(responseList => {
-        for (const response of responseList) {
-          let size = parseInt(response.length);
-          let websiteURL = response.URL;
-          if ((size === null || size === undefined || size === 0) || (websiteURL === null || websiteURL === undefined || websiteURL === '')) {
-            return false;
-          }
-          let lastSize = localStorage.getItem(websiteURL);
-          if (lastSize === null || lastSize === undefined) {
-            localStorage.setItem(websiteURL, size);
-            lastSize = localStorage.getItem('URL');
-          }
-          if (size !== parseInt(lastSize)) {
-            popup(websiteURL);
-          }else{
-            console.log(websiteURL);
-          }
-        }
-      });
+    processData(promises);
+
   });
 
 }
 
+/**
+ * @param  {} promises
+ */
+function processData(promises) {
+  Promise.all(promises)
+    .then(responseList => {
+      for (const response of responseList) {
+        console.log(response);
+        let size = parseInt(response.length);
+        let oldHTML = response.html;
+        let websiteURL = `${response.URL}`.replace(/ /g, '');
+        console.log(websiteURL);
+        if ((size === null || size === undefined || size === 0) || (websiteURL === null || websiteURL === undefined || websiteURL === '')) {
+          console.log('false');
+          return false;
+        }
+
+        let lastSize = localStorage.getItem(websiteURL);
+        console.log(lastSize);
+        if (lastSize === null || lastSize === undefined) {
+          const object = {
+            'size': size,
+            'url': websiteURL,
+            'oldHTML': oldHTML
+          }
+          localStorage.setItem(websiteURL, JSON.stringify(object));
+        }
+
+        lastSize = localStorage.getItem(websiteURL);
+        lastSize = JSON.parse(lastSize).size;
+
+        if (size !== parseInt(lastSize)) {
+
+          const object = {
+            'size': size,
+            'url': websiteURL,
+            'oldHTML': oldHTML
+          }
+          localStorage.setItem(websiteURL, JSON.stringify(object));
+          popup(websiteURL);
+        }
+      }
+    });
+}
+
+
+/**
+ * @param  {} userInput
+ */
 function isUrlValid(userInput) {
   const res = userInput.match(/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/g);
   if (res == null)
@@ -97,10 +129,43 @@ function popup(title) {
 // create a on Click listener for notifications
 chrome.notifications.onClicked.addListener(onClick);
 
-function onClick(title) {
-  chrome.notifications.clear(title);
+
+/**
+ * @param  {} function(request
+ * @param  {} sender
+ * @param  {} sendResponse
+ */
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  if (request.website !== null || request.website !== undefined) {
+    if (request.newHTML !== null || request.newHTML !== undefined) {
+
+      // Get original Html
+      let object = JSON.parse(localStorage.getItem(request.website));
+      let originalHTML = object.oldHTML;
+
+
+      let differentHTML = htmldiff(originalHTML.replace(/\\n/g, '').replace(/\\t/g, ''), request.newHTML.replace(/\\n/g, '').replace(/\\t/g, '')); // Diff HTML strings
+    
+
+      sendResponse(differentHTML);
+    }
+  }
+
+});
+
+/**
+ * @param  {} title
+ */
+function onClick(url) {
+  chrome.notifications.clear(url);
+
   chrome.tabs.create({
-    url: title
+    url: url
   });
 }
-setInterval(init, 5 * 60 * 1000);
+
+/**
+ * @param  {} init
+ * @param  {} 5*60*100
+ */
+setInterval(init, 5 * 60 * 100);

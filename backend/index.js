@@ -1,8 +1,7 @@
 'use strict'
 
-
 const request = require('request');
-const app = require('express')()
+const app = require('express')();
 
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
@@ -11,12 +10,10 @@ app.use(function (req, res, next) {
 });
 
 
-
-
 // Default routing file
 /**
  * @param  {} '/'
- * @param  {} (req
+ * @param  {} req
  * @param  {} res
  */
 app.get('/', (req, res) => {
@@ -25,8 +22,8 @@ app.get('/', (req, res) => {
     JSON.stringify({
       message: 'Nothing to see here!! 😘'
     })
-  )
-})
+  );
+});
 
 
 app.get('/router', (req, res) => {
@@ -70,7 +67,6 @@ app.get('/router', (req, res) => {
         })
       )
     }
-
   });
 });
 
@@ -81,11 +77,12 @@ app.get('/router', (req, res) => {
  */
 app.set('port', process.env.PORT || 5000);
 
+
 // Spin up the server
 /**
  * @param  {} app.get('port'
  * @param  {} function(
  */
 app.listen(app.get('port'), function () {
-  console.log('running on port', app.get('port'))
+  console.log('running on port', app.get('port'));
 });

@@ -13,16 +13,6 @@ var vm = new Vue({
   },
   computed: {},
   methods: {
-
-    create: function create() {
-
-
-
-    },
-
-    eventAction: function eventAction() {
-
-    },
     update: function update(e) {
       this.editor = e.target.value;
     },
