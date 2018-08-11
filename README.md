@@ -4,6 +4,14 @@
 
 ![alt text](.github/screenshot.png "Logo Title Text 1")
 
+## Compare version
+
+```sh
+
+git checkout compare-version && gulp 
+
+```
+
 ## Getting Started
 
 ```sh

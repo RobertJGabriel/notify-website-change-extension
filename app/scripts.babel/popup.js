@@ -1,7 +1,7 @@
 var vm = new Vue({
   el: '#app',
   data: {
-    editor:'',
+    editor: '',
   },
   watch: {
     editor: function () {
@@ -11,18 +11,7 @@ var vm = new Vue({
   mounted: function () {
     this.loadData();
   },
-  computed: {},
   methods: {
-
-    create: function create() {
-
-
-
-    },
-
-    eventAction: function eventAction() {
-
-    },
     update: function update(e) {
       this.editor = e.target.value;
     },
