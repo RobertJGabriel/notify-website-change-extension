@@ -11,7 +11,6 @@ var vm = new Vue({
   mounted: function () {
     this.loadData();
   },
-  computed: {},
   methods: {
     update: function update(e) {
       this.editor = e.target.value;
@@ -23,7 +22,6 @@ var vm = new Vue({
         return true;
       });
     },
-
     loadData: function loadData() {
       // Check if local storage is enabled
       self = this;

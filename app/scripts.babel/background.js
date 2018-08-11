@@ -35,10 +35,10 @@ function init() {
   chrome.storage.sync.get('storedData', item => {
     const textarea = item.storedData;
 
-    if (textarea === null || textarea === undefined) {
+    // If the text area is empty
+    if (textarea === null || textarea === undefined || textarea.trim() === '') {
       return false;
     }
-
     const txtArray = textarea.split('\n');
     let promises = [];
     for (const URL of txtArray) {
@@ -61,32 +61,40 @@ function processData(promises) {
   Promise.all(promises)
     .then(responseList => {
       for (const response of responseList) {
-        console.log(response);
         let size = parseInt(response.length);
         let oldHTML = response.html;
         let websiteURL = `${response.URL}`.replace(/ /g, '');
-        console.log(websiteURL);
+
+        // Check we get all the json assets needed
         if ((size === null || size === undefined || size === 0) || (websiteURL === null || websiteURL === undefined || websiteURL === '')) {
-          console.log('false');
           return false;
         }
 
+        // Check the localstorage item if its there
         let lastSize = localStorage.getItem(websiteURL);
-        console.log(lastSize);
+
+        // If there is not data stored in the localstorage
         if (lastSize === null || lastSize === undefined) {
+
+          // Create an object
           const object = {
             'size': size,
             'url': websiteURL,
             'oldHTML': oldHTML
-          }
+          };
+
+          // Store it in the localstorage
           localStorage.setItem(websiteURL, JSON.stringify(object));
         }
 
+        //Get the localstoage.
         lastSize = localStorage.getItem(websiteURL);
-        lastSize = JSON.parse(lastSize).size;
+        lastSize = JSON.parse(lastSize).size; // Parse the data
 
+        // If the data is different
         if (size !== parseInt(lastSize)) {
 
+          // Update with new information.
           const object = {
             'size': size,
             'url': websiteURL,
@@ -112,6 +120,7 @@ function isUrlValid(userInput) {
 }
 
 /**
+ * Create the popup
  * @param  {} title
  */
 function popup(title) {
@@ -128,7 +137,6 @@ function popup(title) {
 
 // create a on Click listener for notifications
 chrome.notifications.onClicked.addListener(onClick);
-
 
 /**
  * @param  {} function(request
@@ -158,7 +166,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
  */
 function onClick(url) {
   chrome.notifications.clear(url);
-
   chrome.tabs.create({
     url: url
   });
