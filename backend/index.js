@@ -30,7 +30,6 @@ app.get('/', (req, res) => {
 
 
 app.get('/router', (req, res) => {
-
   let url = req.query.url;
   console.log(url);
   if (typeof url === 'undefined' || url === null) {
@@ -39,36 +38,40 @@ app.get('/router', (req, res) => {
       JSON.stringify({
         message: 'No Paramater',
         length: 0,
-        URL: url
+        URL: url,
+        html: ''
       })
     )
   }
 
+
   var options = {
-    uri: url,
+    uri: url ,
     json: true
   };
 
   request(options, function (error, response, data) {
 
-    if (!error && response.statusCode == 200) {
+    if (!error && response.statusCode  == 200) {
       res.setHeader('Content-Type', 'application/json')
       res.send(
         JSON.stringify({
           message: response.headers['last-modified'],
           length: data.length,
-          URL: url
+          URL: url,
+          html: data
         })
       )
-    } else {
+    }else{
       res.setHeader('Content-Type', 'application/json')
       res.send(
         JSON.stringify({
           message: 'No Paramater',
           length: data.length,
-          URL: url
+          URL: url,
+          html: data
         })
-      )
+      );
     }
 
   });
